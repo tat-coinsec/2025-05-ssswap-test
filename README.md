@@ -1,18 +1,12 @@
 # S..S..Swap
-## Prize Pool TO BE FILLED OUT BY CYFRIN
-Total Pool -
 
-H/M -
+Starts: May 29th, 2025 Noon UTC
 
-Low -
-
-Starts:
-
-Ends:
+Ends: June 05th, 2025 Noon UTC
 
 nSLOC: 
 
-Complexity Score: 
+[//]: # (contest-details-open)
 
 ## About the Project
 
@@ -36,21 +30,52 @@ The audit is supposed to focus on the code validation of what is written and inv
 The Protocol is permissionless and has no admin functionality, therefor no trusted roles are integrated.
 Other than that we hopefully have Liquidity Providers and Swappers, called Users.
 
+[//]: # (contest-details-close)
+
+[//]: # (scope-open)
+
+## Scope
+
+All Contracts within ```programs/amm/src/``` are in scope:
+
+```
+programs/amm/src/
+├── instructions
+    ├── liquidity_operations.rs
+    ├── swap_operations.rs
+    ├── transfer.rs
+├── state
+    ├── liquidity_pool.rs
+├── lib.rs
+```
+
 ## Compatibilities
 
   Blockchains:
+
       - Solana
+
   Tokens:
+
       - SPL and Token22, NO native SOL
 
-## Setup
-This is a standard Anchor project, using LiteSVM for testing
+[//]: # (scope-close)
 
+[//]: # (getting-started-open)
+
+## Setup
+
+```
 Build
 anchor build
-
 Test
+```
 
+[//]: # (getting-started-close)
+
+[//]: # (known-issues-open)
 
 ## Known Issues
 None.
+
+[//]: # (known-issues-close)
