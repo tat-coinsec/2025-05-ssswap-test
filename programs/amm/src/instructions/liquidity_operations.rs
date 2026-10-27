@@ -208,6 +208,11 @@ pub fn initialize_pool(context: Context<InitializePool>, amount_token_a: u64, am
     // Call the calculation function (assuming it returns Result<u64>)
     let lp_amount_to_mint: u64 = liquidity_calculation(amount_token_a, amount_token_b)?;
 
+    // A pool opened with a dust-sized LP supply lets the first depositor
+    // inflate the share price: require a minimum initial mint, as Uniswap v2
+    // does with MINIMUM_LIQUIDITY.
+    require!(lp_amount_to_mint >= 1000, AmmError::LpAmountCalculation);
+
     // Create the bump slice variable first
     let bump_seed = [context.bumps.liquidity_pool]; // Store the bump in a separate variable
     let token_a_key = context.accounts.token_mint_a.key();
@@ -407,8 +412,13 @@ pub fn calculate_token_b_provision_with_a_given<'info>(
         return err!(AmmError::CannotAddLiquidityToEmptyPool); 
     }
 
-    let amount_b_to_deposit_u128 = (amount_a_to_deposit as u128)
+    // Round UP: the pool must never receive less token B than the exact
+    // ratio requires, or every deposit dilutes the existing providers.
+    let numerator = (amount_a_to_deposit as u128)
         .checked_mul(reserve_b as u128)
+        .ok_or(AmmError::Overflow)?;
+    let amount_b_to_deposit_u128 = numerator
+        .checked_add(reserve_a as u128 - 1)
         .ok_or(AmmError::Overflow)?
         .checked_div(reserve_a as u128)
         .ok_or(AmmError::DivisionByZero)?;
