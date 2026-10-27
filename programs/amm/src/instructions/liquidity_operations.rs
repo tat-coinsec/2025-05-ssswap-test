@@ -208,6 +208,11 @@ pub fn initialize_pool(context: Context<InitializePool>, amount_token_a: u64, am
     // Call the calculation function (assuming it returns Result<u64>)
     let lp_amount_to_mint: u64 = liquidity_calculation(amount_token_a, amount_token_b)?;
 
+    // A pool opened with a dust-sized LP supply lets the first depositor
+    // inflate the share price: require a minimum initial mint, as Uniswap v2
+    // does with MINIMUM_LIQUIDITY.
+    require!(lp_amount_to_mint >= 1000, AmmError::LpAmountCalculation);
+
     // Create the bump slice variable first
     let bump_seed = [context.bumps.liquidity_pool]; // Store the bump in a separate variable
     let token_a_key = context.accounts.token_mint_a.key();
