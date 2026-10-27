@@ -412,8 +412,13 @@ pub fn calculate_token_b_provision_with_a_given<'info>(
         return err!(AmmError::CannotAddLiquidityToEmptyPool); 
     }
 
-    let amount_b_to_deposit_u128 = (amount_a_to_deposit as u128)
+    // Round UP: the pool must never receive less token B than the exact
+    // ratio requires, or every deposit dilutes the existing providers.
+    let numerator = (amount_a_to_deposit as u128)
         .checked_mul(reserve_b as u128)
+        .ok_or(AmmError::Overflow)?;
+    let amount_b_to_deposit_u128 = numerator
+        .checked_add(reserve_a as u128 - 1)
         .ok_or(AmmError::Overflow)?
         .checked_div(reserve_a as u128)
         .ok_or(AmmError::DivisionByZero)?;
