@@ -79,3 +79,7 @@ Test
 None.
 
 [//]: # (known-issues-close)
+
+## Running the tests
+
+Run `anchor test` from the repository root.
